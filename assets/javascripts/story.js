@@ -5,10 +5,10 @@ RB.Story = RB.Object.create(RB.Issue, RB.EditableInplace, {
   initialize: function(el){
     var j;  // This ensures that we use a local 'j' variable, not a global one.
     var self = this;
-    
+
     this.$ = j = RB.$(el);
     this.el = el;
-    
+
     // Associate this object with the element for later retrieval
     j.data('this', this);
 
@@ -30,7 +30,7 @@ RB.Story = RB.Object.create(RB.Issue, RB.EditableInplace, {
   beforeSave: function(){
     // Do nothing
   },
-  
+
   editDialogTitle: function(){
     return "Story #" + this.getID();
   },
@@ -42,9 +42,10 @@ RB.Story = RB.Object.create(RB.Issue, RB.EditableInplace, {
 
     this.setAllowedStatuses(tracker, status);
     tracker.change(function() { self.setAllowedStatuses(tracker, status); });
-    var l = editor.children(':first').insertAfter(editor.find('.tracker_id.editor'));
-    editor.children(':first').insertAfter(l);
-    editor.find('.subject.editor').width(this.$.find('.fff-wrapmiddle').width()-200);
+    // var l = editor.children(':first').insertAfter(editor.find('.tracker_id.editor'));
+    // editor.children(':first').insertAfter(l);
+    // editor.find('.subject.editor').width(this.$.find('.fff-wrapmiddle').width()-250);
+    // editor.find('.description.editor').width(this.$.find('.fff-wrapmiddle').width()-250);
     var name = editor.find('.name.editor');
     name.width(parseInt(name.attr('_rb_width'),10) - 10);
   },
@@ -81,14 +82,14 @@ RB.Story = RB.Object.create(RB.Issue, RB.EditableInplace, {
       status.append(option);
     }
   },
-  
+
   getPoints: function(){
     points = parseFloat( this.$.find('.story_points').first().text() );
     return ( isNaN(points) ? 0 : points );
   },
 
   getTracker: function(){
-	return this.$.find('.tracker_id .t').text();
+  return this.$.find('.tracker_id .t').text();
   },
 
   getType: function(){
@@ -98,7 +99,7 @@ RB.Story = RB.Object.create(RB.Issue, RB.EditableInplace, {
   markIfClosed: function(){
     // Do nothing
   },
-  
+
   newDialogTitle: function(){
     return "New Story";
   },
@@ -107,28 +108,28 @@ RB.Story = RB.Object.create(RB.Issue, RB.EditableInplace, {
     var url;
     var j = this.$;
     var nxt = this.$.next();
-    var sprint_id = this.$.parents('.backlog').data('this').isSprintBacklog() ? 
+    var sprint_id = this.$.parents('.backlog').data('this').isSprintBacklog() ?
                     this.$.parents('.backlog').data('this').getSprint().data('this').getID() : '';
-    var release_id = this.$.parents('.backlog').data('this').isReleaseBacklog() ? 
+    var release_id = this.$.parents('.backlog').data('this').isReleaseBacklog() ?
                     this.$.parents('.backlog').data('this').getRelease().data('this').getID() : '';
     var data = "next=" + (nxt.length==1 ? this.$.next().data('this').getID() : '') +
                "&fixed_version_id=" + sprint_id;
     if (release_id || !sprint_id) { /* when not sprint_id, issue goes to backlog, so remove release */
       data += "&release_id=" + release_id;
     }
-    
+
     j.find('.editor').each(function() {
-        var value = RB.$(this).val();  
+        var value = RB.$(this).val();
         data += "&" + this.name + '=' + encodeURIComponent(value);
-    });    
-    
+    });
+
     if( this.isNew() ){
       url = RB.urlFor( 'create_story' );
     } else {
       url = RB.urlFor( 'update_story', { id: this.getID() } );
       data += "&_method=put";
     }
-    
+
     return {
       url: url,
       data: data

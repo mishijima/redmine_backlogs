@@ -2,7 +2,7 @@
  * reserved classes are
  * .backlog (used in master_backlog.js to initialize all backlogs)
  * .model (used in backlog.js editable_inplace.js model.js)
- * .sprint (used in backlog.js 
+ * .sprint (used in backlog.js
  * .stories (used in backlog.js for sortable)
  * .editor
  * .editable (bind click on)
@@ -286,7 +286,7 @@ ul li { vertical-align: bottom; } /* close IE7 gap between list items */
 .header .date{
   height:28px;
   line-height:28px;
-  white-space: nowrap; 
+  white-space: nowrap;
   font-size:12px;
 }
 
@@ -352,6 +352,9 @@ ul li { vertical-align: bottom; } /* close IE7 gap between list items */
 #backlogs_container .stories .story .tracker_id{
   display:none;
 }
+#backlogs_container .stories .story .project_id{
+  display:none;
+}
 #backlogs_container .stories .story .id{
   position:relative;
   width:55px;
@@ -406,6 +409,7 @@ ul li { vertical-align: bottom; } /* close IE7 gap between list items */
   display:none;
 }
 #backlogs_container .stories .story.editing .project,
+#backlogs_container .stories .story.editing .project_id,
 #backlogs_container .stories .story.editing select.project_id.editor {
   display:none;
 }
@@ -541,7 +545,8 @@ ul li { vertical-align: bottom; } /* close IE7 gap between list items */
   max-width:80px;
   float: left;
 }
-#backlogs_container .stories .story.editing .subject.editor{
+#backlogs_container .stories .story.editing .subject.editor,
+#backlogs_container .stories .story.editing .description.editor {
   font-size: 11px;
   margin:0;
   padding: 4px 4px 4px 4px;
@@ -563,8 +568,10 @@ ul li { vertical-align: bottom; } /* close IE7 gap between list items */
   margin:0;
   float: right;
 }
-#backlogs_container .stories .story.editing .subject.editor {
+#backlogs_container .stories .story.editing .subject.editor,
+#backlogs_container .stories .story.editing .description.editor {
   white-space: inherit;
+  width: inherit;
 }
 
 #backlogs_container .editors .editor { /* last: display editor fields. */
@@ -579,10 +586,13 @@ ul li { vertical-align: bottom; } /* close IE7 gap between list items */
 #backlogs_container .stories .editing .edit-actions {
   clear: both;
   height: 28px;
+  text-align: right;
+  display: inline-block;
+  width: 100%;
 }
 #backlogs_container .editing .edit-actions a {
-  display: block;
-  float: left;
+  display: inline-block;
+  /*float: left;*/
   padding: 1px 4px 1px 4px;
   margin: 0.5em;
   margin-left: 1em;
@@ -640,7 +650,7 @@ ul li { vertical-align: bottom; } /* close IE7 gap between list items */
 }
 /* Naive but light handling of colors by user stories tracker */
 
-#backlogs_container .stories .tracker0{
+/*#backlogs_container .stories .tracker0{
   background: -webkit-gradient(linear, left top, left bottom, from(#EEE), to(#FFF));
   background: -moz-linear-gradient(top, #EEE, #FFF);
   filter:progid:DXImageTransform.Microsoft.Gradient(Enabled=1,GradientType=0,StartColorStr=#EEEEEE,EndColorStr=#FFFFFF);
@@ -687,7 +697,7 @@ ul li { vertical-align: bottom; } /* close IE7 gap between list items */
   background: -moz-linear-gradient(top, #EEE, #FED0D0);
   filter:progid:DXImageTransform.Microsoft.Gradient(Enabled=1,GradientType=0,StartColorStr=#EEEEEE,EndColorStr=#FED0D0);
   background-color:#FED0D0;
-}
+}*/
 #backlogs_container .stories .story_field {
   overflow: hidden;
   padding-top: 4px;
@@ -702,11 +712,55 @@ ul li { vertical-align: bottom; } /* close IE7 gap between list items */
 .ui-datepicker {display:none;}
 
 /* override: display story subject in multiple lines */
-.rb-multilinesubject #backlogs_container .stories .story .subject {
+.rb-multilinesubject #backlogs_container .stories .story .subject,
+.rb-multilinesubject #backlogs_container .stories .story .description {
   white-space: normal;
   height: auto;
   overflow: show;
+  text-overflow: ellipsis;
 }
 
 /* show completed sprints */
 #show_completed_sprints { cursor:pointer; }
+
+#backlogs_container ul.stories li.story {
+  padding: 10px;
+  width: inherit;
+}
+#backlogs_container .fieldLine {
+  float: left;
+  margin-bottom: 10px;
+  width: 100%;
+}
+#backlogs_container .fieldLine .fieldLineLabelInline {
+  float: left;
+  color: #818181;
+  width: 30%;
+}
+#backlogs_container .fieldLine .fieldLineValueInline {
+  float: left;
+  color: #222222;
+  word-wrap: break-word;
+  font-weight: 700;
+  width: 70%;
+}
+#backlogs_container .fieldLine .fieldLineValueInline label {
+  color: #222222;
+  font-weight: 700;
+}
+#backlogs_container .fieldLine .fieldLineValueInline select {
+  max-width: 240px;
+}
+#backlogs_container .fieldLine .fieldLineValueInline ul.fieldLineList {
+  overflow: hidden;
+  list-style: none;
+  margin-left: 0px;
+  padding-left: 1px;
+}
+
+#backlogs_container .editors .fieldLineLabelInline .tracker_id{
+  display:block;
+}
+#backlogs_container .editors .fieldLineLabelInline .status_id {
+  padding-left: 0px;
+}

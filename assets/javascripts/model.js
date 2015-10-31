@@ -28,7 +28,7 @@ RB.Model = RB.Object.create({
       this.afterUpdate(data, textStatus, xhr);
     }
   },
-  
+
   afterUpdate: function(data, textStatus, xhr){
     // Do nothing. Child objects may optionally override this
   },
@@ -47,7 +47,7 @@ RB.Model = RB.Object.create({
       this.$.hide('blind');
     }
   },
-  
+
   close: function(){
     this.$.addClass('closed');
   },
@@ -62,7 +62,7 @@ RB.Model = RB.Object.create({
   displayEditor: function(editor){
     var pos = this.$.offset();
     var self = this;
-    
+
     editor.dialog({
       buttons: {
         "Cancel" : function(){ self.cancelEdit(); RB.$(this).dialog("close"); },
@@ -80,18 +80,24 @@ RB.Model = RB.Object.create({
 
   edit: function(){
     var editor = this.getEditor();
-    
+
     // 'this' can change below depending on the context.
     var self = this;
-    
+
     this.$.find('.editable').each(function(index){
       var field = RB.$(this);
       var fieldType = field.attr('fieldtype') ? field.attr('fieldtype') : 'input';
       var fieldName = field.attr('fieldname');
       var fieldLabel = field.attr('fieldlabel');
       var input;
-      
-      RB.$(document.createElement("label")).text(fieldLabel).appendTo(editor);
+
+      var fieldLine = $(document.createElement("div")).addClass("fieldLine");
+      var fieldLineLabelInline = $(document.createElement("div")).addClass("fieldLineLabelInline");
+      var fieldLineValueInline = $(document.createElement("div")).addClass("fieldLineValueInline");
+
+      var label = $(document.createElement("div")).text(fieldLabel);
+      label.addClass(fieldName);
+
       input = fieldType=='select' ? RB.$('#' + fieldName + '_options').clone(true) : RB.$(document.createElement(fieldType));
       input.removeAttr('id');
       input.attr('name', fieldName);
@@ -100,12 +106,13 @@ RB.Model = RB.Object.create({
       input.removeClass('template');
       input.removeClass('helper');
       input.attr('_rb_width', field.width());
+
       // Add a date picker if field is a date field
       if (field.hasClass("date")){
         input.datepicker({ changeMonth: true,
                            changeYear: true,
                            closeText: 'Close',
-                           dateFormat: 'yy-mm-dd', 
+                           dateFormat: 'yy-mm-dd',
                            firstDay: 1,
                            onClose: function(){ RB.$(this).focus(); },
                            selectOtherMonths: true,
@@ -116,44 +123,51 @@ RB.Model = RB.Object.create({
         // So that we won't need a datepicker button to re-show it
         input.bind('mouseup', function(event){ RB.$(this).datepicker("show"); });
       }
-      
+
       // Copy the value in the field to the input element
       value = ( fieldType=='select' ? field.children('.v').first().text() : RB.$.trim(field.text()) );
 
       // Select default value for select fields if none is already selected
       if ((fieldType=='select') && input.children("option[selected='selected']") && value == '') {
-    	  value = input.children("option[selected='selected']:first").val();
+        value = input.children("option[selected='selected']:first").val();
       }
 
       input.val(value);
-      
+
       // Record in the model's root element which input field had the last focus. We will
       // use this information inside RB.Model.refresh() to determine where to return the
       // focus after the element has been refreshed with info from the server.
       input.focus( function(){ self.$.data('focus', RB.$(this).attr('name')); } ).
             blur( function(){ self.$.data('focus', ''); } );
-      
-      input.appendTo(editor);
+
+
+      $(fieldLineLabelInline).append(label);
+      $(fieldLineValueInline).append(input);
+
+      $(fieldLine).append(fieldLineLabelInline);
+      $(fieldLine).append(fieldLineValueInline);
+
+      $(editor).append(fieldLine);
     });
 
     this.displayEditor(editor);
     this.editorDisplayed(editor);
     return editor;
   },
-  
+
   // Override this method to change the dialog title
   editDialogTitle: function(){
     return "Edit " + this.getType();
   },
-  
+
   editorDisplayed: function(editor){
     // Do nothing. Child objects may override this.
   },
-  
+
   endEdit: function(){
     this.$.removeClass('editing');
   },
-  
+
   error: function(xhr, textStatus, error){
     this.markError();
 
@@ -171,7 +185,7 @@ RB.Model = RB.Object.create({
     RB.Dialog.msg(msg);
     this.processError(xhr, textStatus, error);
   },
-  
+
   getEditor: function(){
     // Create the model editor if it does not yet exist
     var editor_id = this.getType().toLowerCase() + "_editor";
@@ -184,15 +198,15 @@ RB.Model = RB.Object.create({
     }
     return editor;
   },
-  
+
   getID: function(){
     return this.$.find('.id .v').text();
   },
-  
+
   getType: function(){
     throw "Child objects must override getType()";
   },
-    
+
   handleClick: function(event){
     if(event.button !== 0) return; // only respond to left click
     var field = RB.$(this);
@@ -208,7 +222,7 @@ RB.Model = RB.Object.create({
     var j = RB.$(this);
     var self = j.data('this');
 
-    if(!RB.$(event.target).hasClass('editable') && 
+    if(!RB.$(event.target).hasClass('editable') &&
        !RB.$(event.target).hasClass('checkbox') &&
        !j.hasClass('editing') &&
        event.target.tagName!='A' &&
@@ -220,7 +234,7 @@ RB.Model = RB.Object.create({
   isClosed: function(){
     return this.$.hasClass('closed');
   },
-  
+
   isNew: function(){
     return !(this.getID());
   },
@@ -228,11 +242,11 @@ RB.Model = RB.Object.create({
   markError: function(){
     this.$.addClass('error');
   },
-  
+
   markIfClosed: function(){
     throw "Child objects must override markIfClosed()";
   },
-  
+
   markSaving: function(){
     this.$.addClass('saving');
   },
@@ -241,7 +255,7 @@ RB.Model = RB.Object.create({
   newDialogTitle: function(){
     return "New " + this.getType();
   },
-    
+
   open: function(){
     this.$.removeClass('closed');
   },
@@ -260,7 +274,7 @@ RB.Model = RB.Object.create({
     }
     this.refreshed();
   },
-  
+
   refreshed: function(){
     // Override as needed
   },
@@ -273,7 +287,7 @@ RB.Model = RB.Object.create({
     var j = this.$;
     var self = this;
     var editors = j.find('.editor');
-    
+
     // Copy the values from the fields to the proper html elements
     editors.each(function(index){
       editor = RB.$(this);
@@ -299,7 +313,7 @@ RB.Model = RB.Object.create({
 
     self.unmarkError();
     self.markSaving();
-    
+
     RB.ajax({
        type: "POST",
        url: saveDir.url,
@@ -324,11 +338,11 @@ RB.Model = RB.Object.create({
     }
     RB.util.refreshToolTip(model);
   },
-  
+
   unmarkError: function(){
     this.$.removeClass('error');
   },
-  
+
   unmarkSaving: function(){
     this.$.removeClass('saving');
   }
