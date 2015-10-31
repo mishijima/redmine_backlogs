@@ -100,6 +100,7 @@ en-GB:
   field_release_end_date: "Release end date"
   field_release_relationship: "Release relationship"
   field_release_start_date: "Release start date"
+  field_release_effective_date: "Release end date"
   field_remaining_hours: "Remaining (hours)"
   field_story_points: "Story points"
   field_subject: Subject
@@ -111,6 +112,8 @@ en-GB:
   field_tracker_id: "Tracker ID"
   field_velocity_based_estimate: "Velocity based estimate"
   field_status_id: "Status"
+  field_sprint_start_date: "Start date"
+  field_sprint_effective_date: "End date"
   label_all_tasks: "All tasks"
   label_back_to_project: "Back to project page"
   label_backlogs: Backlogs
